@@ -1,6 +1,6 @@
 # Hollow Knight modding on Apple Silicon (1.5.12620)
 
-[中文说明](README.zh-CN.md)
+**English** | [简体中文](README.zh-CN.md)
 
 Steam updated Hollow Knight to **1.5.12620**, which moved the game to Unity 6. That broke the Modding API, so mod installers like Scarab and Lumafly can't install mods for this version yet. A port is in progress at [hk-modding/api#164](https://github.com/hk-modding/api/pull/164), but it hasn't been released.
 

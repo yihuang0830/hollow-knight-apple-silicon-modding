@@ -1,6 +1,6 @@
 # 在 Apple Silicon Mac 上给 Hollow Knight 装 mod（1.5.12620）
 
-[English](README.md)
+[English](README.md) | **简体中文**
 
 Steam 版 Hollow Knight 更新到 **1.5.12620** 后，游戏换成了 Unity 6，原来的 Modding API 不能用了，Scarab、Lumafly 这些安装器暂时也装不了这个版本的 mod。新版 API 的适配正在 [hk-modding/api#164](https://github.com/hk-modding/api/pull/164) 里进行，但还没有正式发布。
 
