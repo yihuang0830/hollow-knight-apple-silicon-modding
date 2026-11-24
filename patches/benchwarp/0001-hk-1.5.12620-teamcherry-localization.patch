@@ -1,0 +1,92 @@
+Subject: Port Benchwarp 3.2.6.1 to Hollow Knight 1.5.12620 (Unity 6)
+Date: 2026-11-24
+
+This file is a modification of Benchwarp
+(https://github.com/homothetyhk/HollowKnight.BenchwarpMod, commit 1ac5a3c),
+licensed under the GNU Lesser General Public License v2.1 (see LICENSE in this folder).
+
+Changes:
+- Language hooks moved from Language.Language to TeamCherry.Localization.Language
+  (the game moved its Language class in 1.5.12620).
+- Benchwarp.csproj: reference TeamCherry.Localization.dll,
+  MMHOOK_TeamCherry.Localization.dll and the game's netstandard.dll, and compile
+  against the game's own mscorlib (FrameworkPathOverride).
+
+diff --git a/Benchwarp/Benchwarp.cs b/Benchwarp/Benchwarp.cs
+index 17ac188..f1413f0 100644
+--- a/Benchwarp/Benchwarp.cs
++++ b/Benchwarp/Benchwarp.cs
+@@ -90,7 +90,7 @@ namespace Benchwarp
+ 
+         public bool ToggleButtonInsideMenu => true;
+ 
+-        private readonly string[] bools = new string[] { Language.Language.Get("MOH_ON", "MainMenu"), Language.Language.Get("MOH_OFF", "MainMenu") };
++        private readonly string[] bools = new string[] { TeamCherry.Localization.Language.Get("MOH_ON", "MainMenu"), TeamCherry.Localization.Language.Get("MOH_OFF", "MainMenu") };
+ 
+         public List<IMenuMod.MenuEntry> GetMenuData(IMenuMod.MenuEntry? toggleButtonEntry)
+         {
+diff --git a/Benchwarp/Benchwarp.csproj b/Benchwarp/Benchwarp.csproj
+index 9d1a4c4..7fba4a8 100644
+--- a/Benchwarp/Benchwarp.csproj
++++ b/Benchwarp/Benchwarp.csproj
+@@ -14,6 +14,11 @@
+   </PropertyGroup>
+ 
+   <Import Project="LocalOverrides.targets" Condition="Exists('LocalOverrides.targets')" />
++
++  <PropertyGroup>
++    <!-- Unity 6 (HK 1.5.12620): compile against the game's own mscorlib (has Span types, netstandard 2.1) -->
++    <FrameworkPathOverride>$(HollowKnightRefs)</FrameworkPathOverride>
++  </PropertyGroup>
+   
+   <ItemGroup>
+     <Using Remove="System.Net.Http" />
+@@ -29,6 +34,15 @@
+     <Reference Include="MMHOOK_Assembly-CSharp">
+       <HintPath>$(HollowKnightRefs)\MMHOOK_Assembly-CSharp.dll</HintPath>
+     </Reference>
++    <Reference Include="netstandard">
++      <HintPath>$(HollowKnightRefs)\netstandard.dll</HintPath>
++    </Reference>
++    <Reference Include="TeamCherry.Localization">
++      <HintPath>$(HollowKnightRefs)\TeamCherry.Localization.dll</HintPath>
++    </Reference>
++    <Reference Include="MMHOOK_TeamCherry.Localization">
++      <HintPath>$(HollowKnightRefs)\MMHOOK_TeamCherry.Localization.dll</HintPath>
++    </Reference>
+     <Reference Include="MMHOOK_PlayMaker">
+       <HintPath>$(HollowKnightRefs)\MMHOOK_PlayMaker.dll</HintPath>
+     </Reference>
+diff --git a/Benchwarp/Localization.cs b/Benchwarp/Localization.cs
+index b36b27d..3ab1336 100644
+--- a/Benchwarp/Localization.cs
++++ b/Benchwarp/Localization.cs
+@@ -1,4 +1,5 @@
+-using Language;
++using LanguageCode = TeamCherry.Localization.LanguageCode;
++using TCLanguage = TeamCherry.Localization.Language;
+ 
+ namespace Benchwarp;
+ 
+@@ -22,17 +23,17 @@ public static class Localization
+ 
+     internal static void HookLocalization()
+     {
+-        On.Language.Language.DoSwitch += OnSwitchLanguage;
+-        SetLanguage(Language.Language.CurrentLanguage());
++        On.TeamCherry.Localization.Language.DoSwitch += OnSwitchLanguage;
++        SetLanguage(TCLanguage.CurrentLanguage());
+     }
+ 
+     internal static void UnhookLocalization()
+     {
+-        On.Language.Language.DoSwitch -= OnSwitchLanguage;
++        On.TeamCherry.Localization.Language.DoSwitch -= OnSwitchLanguage;
+         _map = null;
+     }
+ 
+-    private static void OnSwitchLanguage(On.Language.Language.orig_DoSwitch orig, LanguageCode newLang)
++    private static void OnSwitchLanguage(On.TeamCherry.Localization.Language.orig_DoSwitch orig, LanguageCode newLang)
+     {
+         orig(newLang);
+         SetLanguage(newLang);
